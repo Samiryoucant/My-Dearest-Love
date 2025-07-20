@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Marry Me? 💍</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: #000;
+        }
+        
+        .dancing-text {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .heart {
+            position: absolute;
+            color: #ff006e;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.7; }
+            100% { transform: translateY(0px) rotate(360deg); opacity: 1; }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        .romantic-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradient 8s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .photo-frame {
+            transition: all 0.5s ease;
+            box-shadow: 0 0 30px rgba(255, 182, 193, 0.6);
+        }
+        
+        .photo-frame:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 182, 193, 0.9);
+        }
+        
+        .yes-button {
+            background: linear-gradient(45deg, #ff006e, #ff758f);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
+        }
+        
+        .yes-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 0, 110, 0.6);
+        }
+        
+        .no-button {
+            background: linear-gradient(45deg, #6c757d, #adb5bd);
+            transition: all 0.3s ease;
+            cursor: not-allowed;
+        }
+        
+        .no-button:hover {
+            transform: translateX(10px);
+        }
+        
+        .fade-in {
+            animation: fadeIn 2s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff006e;
+            animation: confetti-fall 3s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        
+        .love-timeline {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+        }
+        
+        .love-timeline.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="min-h-screen romantic-bg flex items-center justify-center p-4">
+    <!-- Audio Elements -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav">
+    </audio>
+    <audio id="yesSound">
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-04.wav" type="audio/wav">
+    </audio>
+    <audio id="heartbeat">
+        <source src="https://www.soundjay.com/heartbeat/heartbeat-01a.wav" type="audio/wav">
+    </audio>
+
+    <!-- Floating Hearts Background -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+
+    <!-- Main Container -->
+    <div class="max-w-4xl w-full mx-auto relative z-10">
+        <!-- Initial Message -->
+        <div id="initialMessage" class="text-center fade-in">
+            <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 dancing-text">
+                My Dearest Love 💕
+            </h1>
+            <p class="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
+                Every moment with you has been a beautiful chapter in our love story.<br>
+                Today, I want to write the most important page yet...
+            </p>
+            <button onclick="startProposal()" class="bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30">
+                Continue Our Story <i class="fas fa-heart ml-2"></i>
+            </button>
+        </div>
+
+        <!-- Proposal Section -->
+        <div id="proposalSection" class="hidden">
+            <!-- Photo Gallery -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <img src="https://picsum.photos/300/300?random=1" alt="Memory 1" class="photo-frame rounded-lg w-full h-48 object-cover">
+                <img src="https://picsum.photos/300/300?random=2" alt="Memory 2" class="photo-frame rounded-lg w-full h-48 object-cover">
+                <img src="https://picsum.photos/300/300?random=3" alt="Memory 3" class="photo-frame rounded-lg w-full h-48 object-cover">
+                <img src="https://picsum.photos/300/300?random=4" alt="Memory 4" class="photo-frame rounded-lg w-full h-48 object-cover">
+                <img src="https://picsum.photos/300/300?random=5" alt="Memory 5" class="photo-frame rounded-lg w-full h-48 object-cover">
+                <img src="https://picsum.photos/300/300?random=6" alt="Memory 6" class="photo-frame rounded-lg w-full h-48 object-cover">
+            </div>
+
+            <!-- Love Timeline -->
+            <div class="love-timeline bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+                <h3 class="text-2xl font-bold text-white mb-4 text-center">Our Journey Together</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center">💕</div>
+                        <div>
+                            <p class="text-white font-semibold">First Meeting</p>
+                            <p class="text-white/70 text-sm">The day our hearts first connected</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">🌹</div>
+                        <div>
+                            <p class="text-white font-semibold">First Date</p>
+                            <p class="text-white/70 text-sm">When magic filled the air</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">💍</div>
+                        <div>
+                            <p class="text-white font-semibold">Today</p>
+                            <p class="text-white/70 text-sm">The day I ask you to be mine forever</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Question -->
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-6xl font-bold text-white mb-6 dancing-text">
+                    Will You Marry Me? 💍
+                </h2>
+                <p class="text-xl text-white/90 mb-8">
+                    I want to spend every sunrise and sunset with you, forever and always.
+                </p>
+
+                <!-- Interactive Elements -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button onclick="sayYes()" class="yes-button text-white px-12 py-4 rounded-full text-xl font-bold hover:scale-105 transition-all duration-300">
+                        YES! I Do ❤️
+                    </button>
+                    <button id="noButton" class="no-button text-white px-8 py-4 rounded-full text-lg font-semibold">
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Celebration Section -->
+        <div id="celebrationSection" class="hidden text-center">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 dancing-text">
+                    SHE SAID YES! 🎉
+                </h1>
+                <p class="text-2xl text-white/90 mb-8">
+                    My heart is overflowing with joy! I can't wait to start our forever together.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+                    <img src="https://picsum.photos/300/300?random=7" alt="Celebration" class="photo-frame rounded-lg w-full h-48 object-cover">
+                    <img src="https://picsum.photos/300/300?random=8" alt="Happiness" class="photo-frame rounded-lg w-full h-48 object-cover">
+                </div>
+                <button onclick="resetProposal()" class="mt-8 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30">
+                    Relive This Moment <i class="fas fa-heart ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audio control
+        let bgMusic = document.getElementById('bgMusic');
+        let yesSound = document.getElementById('yesSound');
+        let heartbeat = document.getElementById('heartbeat');
+
+        // Create floating hearts
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const heartSymbols = ['💕', '💖', '💗', '💝', '💞', '❤️', '🧡', '💛', '💚', '💙', '💜'];
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heart.style.animationDelay = Math.random() * 6 + 's';
+                heart.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        // Create sparkles
+        function createSparkles() {
+            setInterval(() => {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                document.body.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 1500);
+            }, 300);
+        }
+
+        // Start proposal
+        function startProposal() {
+            document.getElementById('initialMessage').classList.add('hidden');
+            document.getElementById('proposalSection').classList.remove('hidden');
+            
+            // Play background music
+            bgMusic.volume = 0.3;
+            bgMusic.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Show timeline with delay
+            setTimeout(() => {
+                document.querySelector('.love-timeline').classList.add('show');
+            }, 1000);
+            
+            // Make "No" button move
+            let noButton = document.getElementById('noButton');
+            noButton.addEventListener('mouseenter', () => {
+                noButton.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px)`;
+            });
+        }
+
+        // Say yes function
+        function sayYes() {
+            // Play celebration sounds
+            yesSound.play().catch(e => console.log('Audio play failed:', e));
+            heartbeat.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Hide proposal section and show celebration
+            document.getElementById('proposalSection').classList.add('hidden');
+            document.getElementById('celebrationSection').classList.remove('hidden');
+            
+            // Create confetti
+            createConfetti();
+            
+            // Stop background music
+            bgMusic.pause();
+            bgMusic.currentTime = 0;
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#ff006e', '#ff758f', '#ffd23f', '#06ffa5', '#4facfe', '#f093fb'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        // Reset proposal
+        function resetProposal() {
+            location.reload();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createFloatingHearts();
+            createSparkles();
+        });
+    </script>
+</body>
+</html>
